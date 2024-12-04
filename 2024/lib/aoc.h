@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 int int_compare(const void *a, const void *b);
 char *read_file(const char *filename);
@@ -12,9 +13,6 @@ int count_lines(const char *filename);
 #endif // AOC_H_
 
 #ifdef AOC_UTILS_IMPLEMENTATION
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 int int_compare(const void *a, const void *b)
 {

@@ -1,6 +1,5 @@
 #define AOC_UTILS_IMPLEMENTATION
 #include "../../lib/aoc.h"
-#include <ctype.h>
 
 #define DELIM " \n"
 
