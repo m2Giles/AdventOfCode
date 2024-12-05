@@ -1,5 +1,5 @@
 #define AOC_UTILS_IMPLEMENTATION
-#include "../../lib/aoc.h"
+#include "../../../lib/aoc.h"
 
 #define NUMBERS 9
 #define WORD_SIZE 5

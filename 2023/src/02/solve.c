@@ -1,5 +1,5 @@
 #define AOC_UTILS_IMPLEMENTATION
-#include "../../lib/aoc.h"
+#include "../../../lib/aoc.h"
 
 #define RED_CUBES 12
 #define GREEN_CUBES 13

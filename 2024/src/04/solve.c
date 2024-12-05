@@ -1,5 +1,5 @@
 #define AOC_UTILS_IMPLEMENTATION
-#include "../../lib/aoc.h"
+#include "../../../lib/aoc.h"
 
 #define DELIM " \n"
 
@@ -29,57 +29,50 @@ int main(int argc, char **argv)
     }
 
     // Make grid
-    int height = lines;
-    int width = 0;
-    while (buffer[width] != '\n')
+    Grid_t grid = make_grid(buffer, lines);
+    if (!grid.grid)
     {
-        width++;
+        destroy_grid(grid);
+        free(buffer);
+        return EXIT_FAILURE;
     }
-
-    char grid[height][width];
-
-    for (int i = 0; i < height; ++i)
+    for (int i = 0; i < grid.height; ++i)
     {
-        for (int j = 0; j < width; ++j)
+        for (int j = 0; j < grid.width; ++j)
         {
-            grid[j][i] = buffer[i * height + j + i];
-        }
-    }
+            if (grid.grid[i][j] == 'X')
+            {
+                // down (+, 0)
+                if (i + 3 < grid.height && grid.grid[i + 1][j] == 'M' && grid.grid[i + 2][j] == 'A' && grid.grid[i + 3][j] == 'S')
+                    solution += 1;
 
-    for (int i = 0; i < height; ++i)
-    {
-        for (int j = 0; j < width; ++j)
-        {
-            // right (+, 0)
-            if (j + 3 < width && grid[j][i] == 'X' && grid[j + 1][i] == 'M' && grid[j + 2][i] == 'A' && grid[j + 3][i] == 'S')
-                solution += 1;
+                // right (0, +)
+                if (j + 3 < grid.width && grid.grid[i][j + 1] == 'M' && grid.grid[i][j + 2] == 'A' && grid.grid[i][j + 3] == 'S')
+                    solution += 1;
 
-            // down (0, +)
-            if (i + 3 < height && grid[j][i] == 'X' && grid[j][i + 1] == 'M' && grid[j][i + 2] == 'A' && grid[j][i + 3] == 'S')
-                solution += 1;
+                // up (-, 0)
+                if (i - 3 >= 0 && grid.grid[i - 1][j] == 'M' && grid.grid[i - 2][j] == 'A' && grid.grid[i - 3][j] == 'S')
+                    solution += 1;
 
-            // left (-, 0)
-            if (j - 3 >= 0 && grid[j][i] == 'X' && grid[j - 1][i] == 'M' && grid[j - 2][i] == 'A' && grid[j - 3][i] == 'S')
-                solution += 1;
+                // left (0, -)
+                if (j - 3 >= 0  && grid.grid[i][j - 1] == 'M' && grid.grid[i][j - 2] == 'A' && grid.grid[i][j - 3] == 'S')
+                    solution += 1;
 
-            // up (0, -)
-            if (i - 3 >= 0 && grid[j][i] == 'X' && grid[j][i - 1] == 'M' && grid[j][i - 2] == 'A' && grid[j][i - 3] == 'S')
-                solution += 1;
+                // SE (+, +)
+                if (i + 3 < grid.height && j + 3 < grid.width && grid.grid[i + 1][j + 1] == 'M' && grid.grid[i + 2][j + 2] == 'A' && grid.grid[i + 3][j + 3] == 'S')
+                    solution += 1;
 
-            // SE (+, +)
-            if (j + 3 < width && i + 3 < height && grid[j][i] == 'X' && grid[j + 1][i + 1] == 'M' && grid[j + 2][i + 2] == 'A' && grid[j + 3][i + 3] == 'S')
-                solution += 1;
+                // NE (-, +)
+                if (i - 3 >= 0 && j + 3 < grid.width && grid.grid[i - 1][j + 1] == 'M' && grid.grid[i - 2][j + 2] == 'A' && grid.grid[i - 3][j + 3] == 'S')
+                    solution += 1;
+                // NW (-, -)
+                if (i -3 >= 0 && j - 3 >= 0 && grid.grid[i - 1][j - 1] == 'M' && grid.grid[i - 2][j - 2] == 'A' && grid.grid[i - 3][j - 3] == 'S')
+                    solution += 1;
 
-            // SW (-, +)
-            if (j - 3 >= 0 && i + 3 < height && grid[j][i] == 'X' && grid[j - 1][i + 1] == 'M' && grid[j - 2][i + 2] == 'A' && grid[j - 3][i + 3] == 'S')
-                solution += 1;
-            // NW (-, -)
-            if (j - 3 >= 0 && i - 3 >= 0 && grid[j][i] == 'X' && grid[j - 1][i - 1] == 'M' && grid[j - 2][i - 2] == 'A' && grid[j - 3][i - 3] == 'S')
-                solution += 1;
-
-            // NE (+, -)
-            if (j + 3 < width && i - 3 >= 0 && grid[j][i] == 'X' && grid[j + 1][i - 1] == 'M' && grid[j + 2][i - 2] == 'A' && grid[j + 3][i - 3] == 'S')
-                solution += 1;
+                // SW (+, -)
+                if (i + 3 < grid.height && j - 3 >= 0 && grid.grid[i + 1][j - 1] == 'M' && grid.grid[i + 2][j - 2] == 'A' && grid.grid[i + 3][j - 3] == 'S')
+                    solution += 1;
+            }
         }
     }
 
@@ -88,25 +81,27 @@ int main(int argc, char **argv)
 
     // Part 2
     solution = 0;
-    for (int i = 0; i < height; ++i)
+    for (int i = 1; i < grid.height - 1; ++i)
     {
-        for (int j = 0; j < width; ++j)
+        for (int j = 1; j < grid.width - 1; ++j)
         {
-            if (j + 1 < width && i + 1 < height && j - 1 >= 0 && i - 1 >= 0)
+            if (grid.grid[i][j] == 'A')
             {
-                if(grid[j][i] == 'A' && grid[j+1][i+1] == 'M' && grid[j+1][i-1] == 'M' && grid[j-1][i+1] == 'S' && grid[j-1][i-1] == 'S')
+                if (grid.grid[i + 1][j + 1] == 'M' && grid.grid[i + 1][j - 1] == 'M' && grid.grid[i - 1][j + 1] == 'S' && grid.grid[i - 1][j - 1] == 'S')
                     solution += 1;
-                if(grid[j][i] == 'A' && grid[j+1][i+1] == 'S' && grid[j+1][i-1] == 'S' && grid[j-1][i+1] == 'M' && grid[j-1][i-1] == 'M')
+                if (grid.grid[i + 1][j + 1] == 'S' && grid.grid[i + 1][j - 1] == 'S' && grid.grid[i - 1][j + 1] == 'M' && grid.grid[i - 1][j - 1] == 'M')
                     solution += 1;
-                if(grid[j][i] == 'A' && grid[j+1][i+1] == 'S' && grid[j+1][i-1] == 'M' && grid[j-1][i+1] == 'S' && grid[j-1][i-1] == 'M')
+                if (grid.grid[i + 1][j + 1] == 'S' && grid.grid[i + 1][j - 1] == 'M' && grid.grid[i - 1][j + 1] == 'S' && grid.grid[i - 1][j - 1] == 'M')
                     solution += 1;
-                if(grid[j][i] == 'A' && grid[j+1][i+1] == 'M' && grid[j+1][i-1] == 'S' && grid[j-1][i+1] == 'M' && grid[j-1][i-1] == 'S')
+                if (grid.grid[i + 1][j + 1] == 'M' && grid.grid[i + 1][j - 1] == 'S' && grid.grid[i - 1][j + 1] == 'M' && grid.grid[i - 1][j - 1] == 'S')
                     solution += 1;
             }
         }
     }
     printf("Part2 Solution: %d\n", solution);
 
+    if (grid.grid)
+        destroy_grid(grid);
     if (buffer)
         free(buffer);
 

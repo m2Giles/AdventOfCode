@@ -5,19 +5,24 @@ default:
 create_day day:
     #!/usr/bin/bash
     set -eou pipefail
+    year="$(basename {{ invocation_dir() }})"
+    if [[ ! "${year}" =~ [0-9]{4} ]]; then
+        echo "Not in a Year..."
+        exit 1
+    fi
     if [[ ! "{{ day }}" =~ ^[0-2][0-9]$ ]]; then
         echo "Improper Day..."
         exit 1
     fi
-    mkdir -p src/{{ day }}
-    touch src/{{ day }}/test_file.txt
-    touch src/{{ day }}/input_file.txt
+    mkdir -p ${year}/src/{{ day }}
+    touch ${year}/src/{{ day }}/test_file.txt
+    touch ${year}/src/{{ day }}/input_file.txt
     if [[ -f src/{{ day }}/solve.c ]]; then
         exit 0
     fi
-    cat > src/{{ day }}/solve.c << 'EOF'
+    cat > ${year}/src/{{ day }}/solve.c << 'EOF'
     #define AOC_UTILS_IMPLEMENTATION
-    #include "../../lib/aoc.h"
+    #include "../../../lib/aoc.h"
 
     #define DELIM " \n"
 
@@ -63,17 +68,29 @@ create_day day:
 build day:
     #!/usr/bin/bash
     set -eou pipefail
+    year="$(basename {{ invocation_dir() }})"
+    if [[ ! "${year}" =~ [0-9]{4} ]]; then
+        echo "Not in a Year..."
+        exit 1
+    fi
     if [[ ! "{{ day }}" =~ ^[0-2][0-9]$ ]]; then
         echo "Improper Day?"
         exit 1
     fi
     set -x
     mkdir -p build
-    gcc -o {{ justfile_dir() }}/build/{{ day }}.binary {{ justfile_dir() }}/src/{{ day }}/solve.c -Werror -Wall
+    gcc -o {{ invocation_dir() }}/build/{{ day }}.binary {{ invocation_dir() }}/src/{{ day }}/solve.c -Werror -Wall
 
 run day: (build day)
-    # Test File
-    @./build/{{ day }}.binary "./src/{{ day }}/test_file.txt"
-    # Input File
-    @./build/{{ day }}.binary "./src/{{ day }}/input_file.txt"
+    #!/usr/bin/bash
+    set -eou pipefail
+    year="$(basename {{ invocation_dir() }})"
+    if [[ ! "${year}" =~ [0-9]{4} ]]; then
+        echo "Not in a Year..."
+        exit 1
+    fi
+    echo -e "\033[1mTest File\033[0m"
+    "${year}"/build/{{ day }}.binary "${year}/src/{{ day }}/test_file.txt"
+    echo -e "\033[1mInput File\033[0m"
+    "${year}"/build/{{ day }}.binary "${year}/src/{{ day }}/input_file.txt"
 
