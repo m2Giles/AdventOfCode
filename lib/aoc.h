@@ -5,6 +5,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
+
+#define GREEN "\033[32m"
+#define RED "\033[31m"
+#define BOLD "\033[1m"
+#define NORMAL "\033[0m"
 
 typedef struct
 {
@@ -106,7 +112,7 @@ Grid_t make_grid(const char *buffer, int lines)
         output.width++;
     }
 
-    // Allocate Grid
+    // Allocate and Populate Grid
     char **grid = (char **)malloc((output.height) * sizeof(char *));
     if (!grid)
     {
@@ -114,7 +120,7 @@ Grid_t make_grid(const char *buffer, int lines)
         output.grid = NULL;
         goto end;
     }
-    for (int i = 0; i < output.width; ++i)
+    for (int i = 0; i < output.height; ++i)
     {
         grid[i] = (char *)malloc((output.width + 1) * sizeof(char));
         if (!grid[i])
@@ -123,17 +129,8 @@ Grid_t make_grid(const char *buffer, int lines)
             output.grid = NULL;
             goto end;
         }
-    }
-
-    // Populate Grid
-    for (int i = 0; i < output.height; ++i)
-    {
-        for (int j = 0; j < output.width; ++j)
-        {
-            grid[i][j] = buffer[i * output.height + j + i];
-        }
-        // Null terminate each row array
-        grid[i][output.width + 1] = '\0';
+        memcpy(grid[i], &buffer[i*output.height + i], (output.width + 1) * sizeof(char));
+        grid[i][output.width] = '\0';
     }
 end:
     output.grid = grid;

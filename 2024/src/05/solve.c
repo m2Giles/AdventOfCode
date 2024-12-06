@@ -115,6 +115,7 @@ int main(int argc, char **argv)
         return EXIT_FAILURE;
     }
 
+    // Part 1
     rule_t * temp_rules = get_rules(puzzle);
     if (!temp_rules)
     {
@@ -127,7 +128,6 @@ int main(int argc, char **argv)
     memcpy(rules, temp_rules, sizeof(rule_t) * rule_count);
     free(temp_rules);
     temp_rules = NULL;
-
 
     // Sort
     qsort(rules, puzzle.part1_lines, sizeof(rule_t), rule_compare);
@@ -154,17 +154,15 @@ int main(int argc, char **argv)
         printf("\n");
     }
 
-    // Part 1
     printf("Part1 Solution: %d\n", solution);
 
     // Part 2
     solution = 0;
     free_puzzle_split(puzzle);
-
     puzzle = puzzle_split(buffer);
 
     // Sort
-    qsort(rules, puzzle.part1_lines, sizeof(rule_t), rule_compare);
+    qsort(rules, rule_count, sizeof(rule_t), rule_compare);
 
     update_s = strtok_r(puzzle.part2, "\n", &update_sp);
     while (update_s != NULL)
