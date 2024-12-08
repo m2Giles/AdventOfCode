@@ -29,10 +29,20 @@ typedef struct
     int part2_lines;
 } Parts_t;
 
+typedef struct
+{
+    char *buffer;
+    int count;
+    int lines;
+} Buffer_t;
+
+Buffer_t read_file_buffer(const char *filename);
+char *sgets(char *str, int n, char **input);
 int int_compare(const void *a, const void *b);
 char *read_file(const char *filename);
 int count_lines(const char *filename);
 Grid_t make_grid(const char *buffer, int lines);
+void print_grid(Grid_t grid);
 void destroy_grid(Grid_t grid);
 
 #endif // AOC_H_
@@ -102,6 +112,45 @@ defer:
     return buffer;
 }
 
+Buffer_t read_file_buffer(const char *filename)
+{
+    Buffer_t buffer_t = {0};
+    FILE *fp = NULL;
+    fp = fopen(filename, "r");
+    if (!fp)
+    {
+        perror("fopen failed");
+        goto defer;
+    }
+
+    fseek(fp, 0, SEEK_END);
+    buffer_t.count = ftell(fp);
+    rewind(fp);
+
+    buffer_t.buffer = (char *)malloc(buffer_t.count + 1);
+    if (!buffer_t.buffer)
+    {
+        perror("Memory allocation error");
+        goto defer;
+    }
+
+    fread(buffer_t.buffer, buffer_t.count, 1, fp);
+    buffer_t.buffer[buffer_t.count] = '\0';
+
+    rewind(fp);
+    while (!feof(fp))
+    {
+        char c = fgetc(fp);
+        if (c == '\n')
+            buffer_t.lines++;
+    }
+
+defer:
+    if (fp)
+        fclose(fp);
+    return buffer_t;
+}
+
 Grid_t make_grid(const char *buffer, int lines)
 {
     Grid_t output = {0};
@@ -134,6 +183,18 @@ Grid_t make_grid(const char *buffer, int lines)
 end:
     output.grid = grid;
     return output;
+}
+
+void print_grid(Grid_t grid)
+{
+    for (int i = 0; i < grid.height; ++i)
+    {
+        for (int j = 0; j < grid.width; ++j)
+        {
+            printf("%c", grid.grid[i][j]);
+        }
+        printf("\n");
+    }
 }
 
 void destroy_grid(Grid_t grid)
@@ -192,6 +253,29 @@ void free_puzzle_split(Parts_t puzzle)
 {
     free(puzzle.part1);
     free(puzzle.part2);
+}
+
+char *sgets(char *str, int num, char **input)
+{
+    char *next = *input;
+    int nread = 0;
+
+    while (nread + 1 < num && *next)
+    {
+        int isnewline = (*next == '\n');
+        *str++ = *next++;
+        nread++;
+        if (isnewline)
+            break;
+    }
+
+    if (nread == 0)
+        return NULL; // "eof"
+
+    *str = '\0';
+    // set up input for next call
+    *input = next;
+    return str;
 }
 
 #endif // AOC_UTILS_IMPLEMENTATION

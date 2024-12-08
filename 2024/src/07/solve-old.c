@@ -5,67 +5,62 @@
 
 #define DELIM " \n"
 
+static long cat(long a, long b)
+{
+    int mag = 1;
+    while (mag <= b)
+    {
+        mag *= 10;
+    }
+    return mag * a + b;
+}
+
 static bool pm_match(long target, long result, int *args, int num_args)
 {
-    bool m = false;
-    bool p = false;
-
-    if (result < args[0])
+    if (result > target)
     {
         return false;
     }
-
-    if (num_args == 1)
+    if (num_args == 0)
     {
-        return result == args[num_args - 1];
+        return result == target;
     }
 
-    if (result % args[num_args - 1] == 0)
+    if (pm_match(target, result + args[0], &args[1], num_args - 1))
     {
-        m = pm_match(target, result / args[num_args - 1], args, num_args -1);
-    } 
-
-    p = pm_match(target, result - args[num_args - 1], args, num_args - 1);
-
-    return m || p;
+        return true;
+    }
+    if (pm_match(target, result * args[0], &args[1], num_args - 1))
+    {
+        return true;
+    }
+    return false;
 }
 
 static bool cpm_match(long target, long result, int *args, int num_args)
 {
-    int last = args[num_args - 1];
-    int mag = 1;
-    while (mag <= last)
-    {
-        mag *= 10;
-    }
-
-    bool m = false;
-    bool p = false;
-    bool c = false;
-
-    if (result < args[0])
+    if (result > target)
     {
         return false;
     }
-
-    if (num_args == 1)
+    if (num_args == 0)
     {
-        return result == last;
+        return result == target;
     }
 
-    if (result % last == 0)
+    if (cpm_match(target, result + args[0], &args[1], num_args - 1))
     {
-        m = cpm_match(target, result / last, args, num_args -1);
-    } 
-
-    if ((result - last) % mag == 0)
-    {
-        c = cpm_match(target, (result - last) / mag, args, num_args -1);
+        return true;
     }
-
-    p = cpm_match(target, result - last, args, num_args - 1);
-
-    return  m || p || c;
+    if (cpm_match(target, result * args[0], &args[1], num_args - 1))
+    {
+        return true;
+    }
+    if (cpm_match(target, cat(result, args[0]), &args[1], num_args - 1))
+    {
+        return true;
+    }
+    return false;
 }
 
 int main(int argc, char **argv)
@@ -112,7 +107,7 @@ int main(int argc, char **argv)
             num_args++;
             arg_s = strtok_r(NULL, " ", &arg_sp);
         }
-        if (pm_match(target, target, (int *) args, num_args))
+        if (pm_match(target, args[0], &args[1], num_args - 1))
         {
             solution += target;
         }
@@ -146,7 +141,7 @@ int main(int argc, char **argv)
             num_args++;
             arg_s = strtok_r(NULL, " ", &arg_sp);
         }
-        if (cpm_match(target, target, (int *) args, num_args))
+        if (cpm_match(target, args[0], &args[1], num_args - 1))
         {
             solution += target;
         }

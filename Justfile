@@ -15,7 +15,7 @@ create_day day:
         exit 1
     fi
     mkdir -p ${year}/src/{{ day }}
-    touch ${year}/src/{{ day }}/test_file.txt
+    echo "" > ${year}/src/{{ day }}/test_file.txt
     touch ${year}/src/{{ day }}/input_file.txt
     if [[ -f src/{{ day }}/solve.c ]]; then
         exit 0
@@ -23,11 +23,11 @@ create_day day:
     cat > ${year}/src/{{ day }}/solve.c << 'EOF'
     #define AOC_UTILS_IMPLEMENTATION
     #include "../../../lib/aoc.h"
-
-    #define DELIM " \n"
+    #include <time.h>
 
     int main(int argc, char **argv)
     {
+        clock_t tic = clock();
         if (argc < 2)
         {
             printf("Missing file\n");
@@ -35,31 +35,41 @@ create_day day:
         }
 
         char *filename = argv[1];
-        int solution = 0;
+        size_t solution = 0;
 
         // Read in File
-        char *buffer = read_file(filename);
+        Buffer_t buffer_t = read_file_buffer(filename);
+        char * buffer = buffer_t.buffer;
+        int count = buffer_t.count;
+        int lines = buffer_t.lines;
         if (!buffer)
         {
             return EXIT_FAILURE;
         }
-        int lines = count_lines(filename);
-        if (!lines)
+        if (!count)
         {
             fprintf(stderr, "%s is empty\n", filename);
             free(buffer);
             return EXIT_FAILURE;
         }
+        if (!lines)
+        {
+            fprintf(stderr, "%s does not have a trailing newline\n", filename);
+        }
 
         // Part 1
-        printf("Part1 Solution: %d\n", solution);
+        clock_t toc = clock();
+        printf("Part1 Solution: %ld\n", solution);
+        printf("Part1 Time: %.03f\n", (double)(toc - tic) / CLOCKS_PER_SEC * 1000);
 
         // Part 2
+        tic = clock();
         solution = 0;
-        printf("Part2 Solution: %d\n", solution);
+        toc = clock();
+        printf("Part2 Solution: %ld\n", solution);
+        printf("Part2 Time: %.03f\n", (double)(toc - tic) / CLOCKS_PER_SEC * 1000);
 
-        if (buffer)
-            free(buffer);
+        free(buffer_t.buffer);
 
         return EXIT_SUCCESS;
     }
