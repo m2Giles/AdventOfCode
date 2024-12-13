@@ -1,7 +1,7 @@
 #define AOC_UTILS_IMPLEMENTATION
 #include "../../../lib/aoc.h"
 
-#define NUM_BLINKS 75
+#define BLINKS 75
 
 typedef struct
 {
@@ -10,8 +10,8 @@ typedef struct
 } cache;
 
 // How to do this without global variables?
-cache caches[NUM_BLINKS][BUFSIZ];
-uint32_t blink_cache[NUM_BLINKS] = {0};
+cache caches[BLINKS][BUFSIZ];
+uint32_t blink_cache[BLINKS] = {0};
  
 typedef struct
 {
