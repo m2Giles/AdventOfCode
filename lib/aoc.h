@@ -1,15 +1,18 @@
 #ifndef AOC_H_
 #define AOC_H_
 
+#include <ctype.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
 #include <stdbool.h>
+#include <time.h>
+#include "aoc_array.h"
 
 #define GREEN "\033[42m"
 #define RED "\033[41m"
-#define BOLD "\033[47m"
+#define BOLD "\033[01m"
 #define NORMAL "\033[0m"
 
 typedef struct
@@ -51,7 +54,16 @@ void destroy_grid(Grid_t grid);
 
 int int_compare(const void *a, const void *b)
 {
-    return (*(int *)a - *(int *)b);
+    int A = *(int *)a;
+    int B = *(int *)b;
+    return (A > B) - (B > A);
+}
+
+int uint64_compare(const void *a, const void *b)
+{
+    uint64_t A = *(uint64_t *)a;
+    uint64_t B = *(uint64_t *)b;
+    return (A > B) - (B > A);
 }
 
 int count_lines(const char *filename)

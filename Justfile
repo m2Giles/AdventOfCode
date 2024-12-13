@@ -23,11 +23,9 @@ create_day day:
     cat > ${year}/src/{{ day }}/solve.c << 'EOF'
     #define AOC_UTILS_IMPLEMENTATION
     #include "../../../lib/aoc.h"
-    #include <time.h>
 
     int main(int argc, char **argv)
     {
-        clock_t tic = clock();
         if (argc < 2)
         {
             printf("Missing file\n");
@@ -58,16 +56,19 @@ create_day day:
         }
 
         // Part 1
+        clock_t tic = clock();
+
         clock_t toc = clock();
         printf("Part1 Solution: %ld\n", solution);
-        printf("Part1 Time: %.03f\n", (double)(toc - tic) / CLOCKS_PER_SEC * 1000);
+        printf("Part1 Time: %.03f ms\n", (double)(toc - tic) / CLOCKS_PER_SEC * 1000);
 
         // Part 2
-        tic = clock();
         solution = 0;
+        tic = clock();
+
         toc = clock();
         printf("Part2 Solution: %ld\n", solution);
-        printf("Part2 Time: %.03f\n", (double)(toc - tic) / CLOCKS_PER_SEC * 1000);
+        printf("Part2 Time: %.03f ms\n", (double)(toc - tic) / CLOCKS_PER_SEC * 1000);
 
         free(buffer_t.buffer);
 

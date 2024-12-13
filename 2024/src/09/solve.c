@@ -17,8 +17,8 @@ struct file_node
     int id;
     int size;
     int freeSpace;
-    file_node * next;
-    file_node * prev;
+    file_node *next;
+    file_node *prev;
 };
 
 void da_append(da *array, const int item)
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
     int holes = 0;
     for (int i = 0; i < count; ++i)
     {
-        if ((i & 1) == 0)
+        if (!(i & 1))
         {
             for (int j = 0; j < buffer[i] - '0'; ++j)
             {
@@ -125,28 +125,28 @@ int main(int argc, char **argv)
     tic = clock();
     solution = 0;
 
-    file_node start = {0, buffer[0] - '0', buffer[1] - '0'};
-    file_node * end = &start;
+    file_node head = {.id = 0, .size = buffer[0] - '0', .freeSpace = buffer[1] - '0', .next = NULL, .prev = NULL};
+    file_node *tail = &head;
 
-    for (int i = 2; i < count; i+=2)
+    for (int i = 2; i < count; i += 2)
     {
         file_node *new = calloc(1, sizeof(file_node));
-        new->id = i/2;
+        new->id = i / 2;
         new->size = buffer[i] - '0';
-        if(i+1 < count)
+        if (i + 1 < count)
         {
-            new->freeSpace = buffer[i+1] - '0';
+            new->freeSpace = buffer[i + 1] - '0';
         }
-        end->next = new;
-        new->prev = end;
-        end = new;
+        tail->next = new;
+        new->prev = tail;
+        tail = new;
     }
 
-    file_node * tail_cursor = end;
-    while(tail_cursor != NULL)
+    file_node *tail_cursor = tail;
+    while (tail_cursor != NULL)
     {
-        file_node * store = tail_cursor->prev;
-        for (file_node * head_cursor = &start; tail_cursor != head_cursor && head_cursor != NULL; head_cursor = head_cursor->next)
+        file_node *store = tail_cursor->prev;
+        for (file_node *head_cursor = &head; tail_cursor != head_cursor && head_cursor != NULL; head_cursor = head_cursor->next)
         {
             if (head_cursor->freeSpace >= tail_cursor->size)
             {
@@ -176,7 +176,7 @@ int main(int argc, char **argv)
 
     solution = 0;
     int position = 0;
-    for (file_node * cursor = &start; cursor != NULL; cursor = cursor->next)
+    for (file_node *cursor = &head; cursor != NULL; cursor = cursor->next)
     {
         for (int i = 0; i < cursor->size; i++)
         {
@@ -189,10 +189,10 @@ int main(int argc, char **argv)
         }
     }
 
-    file_node * cursor = start.next;
+    file_node *cursor = head.next;
     while (cursor != NULL)
     {
-        file_node * temp = cursor;
+        file_node *temp = cursor;
         cursor = cursor->next;
         free(temp);
     }

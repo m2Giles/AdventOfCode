@@ -57,7 +57,7 @@ int find_trail(pos start, char elevation, da *trails, Grid_t grid, bool part)
             {
                 if (start.y + y > -1 && start.x + x > -1 && start.x + x < grid.width && start.y + y < grid.height && grid.grid[start.y + y][start.x + x] == elevation + 1)
                 {
-                    pos new = {.x = start.x + x, .y = start.y + y};
+                    pos new = {.x = start.x + x, .y = start.y + y, .trails = 1};
                     output += find_trail(new, elevation + 1, trails, grid, part);
                 }
             }
@@ -97,7 +97,6 @@ int main(int argc, char **argv)
     }
 
     // Part 1
-    clock_t toc = clock();
 
     Grid_t grid = make_grid(buffer, lines);
 
@@ -123,8 +122,9 @@ int main(int argc, char **argv)
     free(trailheads.items);
     trailheads = (da) {0};
 
+    clock_t toc = clock();
     printf("Part1 Solution: %ld\n", solution);
-    printf("Part1 Time: %.03f\n", (double)(toc - tic) / CLOCKS_PER_SEC * 1000);
+    printf("Part1 Time: %.03f ms\n", (double)(toc - tic) / CLOCKS_PER_SEC * 1000);
 
     // Part 2
     tic = clock();
@@ -154,7 +154,7 @@ int main(int argc, char **argv)
 
     toc = clock();
     printf("Part2 Solution: %ld\n", solution);
-    printf("Part2 Time: %.03f\n", (double)(toc - tic) / CLOCKS_PER_SEC * 1000);
+    printf("Part2 Time: %.03f ms\n", (double)(toc - tic) / CLOCKS_PER_SEC * 1000);
 
     free(buffer_t.buffer);
 
