@@ -8,6 +8,8 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
+
+#define AOC_ARRAY_H_IMPLEMENTATION_
 #include "aoc_array.h"
 
 #define GREEN "\033[42m"
