@@ -1,26 +1,6 @@
 #define AOC_UTILS_IMPLEMENTATION
 #include "../../../lib/aoc.h"
 
-enum
-{
-    UP = 0,
-    RIGHT = 1,
-    DOWN = 2,
-    LEFT = 3
-} decode;
-
-typedef struct
-{
-    int x, y;
-} pos;
-
-const pos dirs[4] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
-
-pos next(pos position, pos direction)
-{
-    return (pos){.x = position.x + direction.x, .y = position.y + direction.y};
-}
-
 typedef struct
 {
     int *items;
@@ -214,16 +194,16 @@ int main(int argc, char **argv)
         switch (puzzle.part2[i])
         {
         case '^':
-            aoc_da_append(&instructions, UP);
+            aoc_da_append(&instructions, NORTH);
             break;
         case '>':
-            aoc_da_append(&instructions, RIGHT);
+            aoc_da_append(&instructions, EAST);
             break;
         case 'v':
-            aoc_da_append(&instructions, DOWN);
+            aoc_da_append(&instructions, SOUTH);
             break;
         case '<':
-            aoc_da_append(&instructions, LEFT);
+            aoc_da_append(&instructions, WEST);
             break;
         default:
             break;

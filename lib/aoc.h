@@ -2,11 +2,11 @@
 #define AOC_H_
 
 #include <ctype.h>
-#include <stdio.h>
+#include <stdbool.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 #include <time.h>
 
 #define AOC_ARRAY_H_IMPLEMENTATION_
@@ -16,6 +16,29 @@
 #define RED "\033[41m"
 #define BOLD "\033[01m"
 #define NORMAL "\033[0m"
+
+#define MOD(a, b)                                                              \
+    ({                                                                         \
+        typeof(a) _a = (a);                                                    \
+        typeof(b) _b = (b);                                                    \
+        assert(_b != 0 && "Divide by Zero");                                   \
+        (_a % _b + _b) % b;                                                    \
+    })
+
+enum
+{
+    NORTH = 0,
+    EAST = 1,
+    SOUTH = 2,
+    WEST = 3
+};
+
+typedef struct
+{
+    int x, y;
+} pos;
+
+const pos dirs[4] = {{0, -1}, {1, 0}, {0, 1}, {-1, 0}};
 
 typedef struct
 {
@@ -49,10 +72,16 @@ int count_lines(const char *filename);
 Grid_t make_grid(const char *buffer, int lines);
 void print_grid(Grid_t grid);
 void destroy_grid(Grid_t grid);
+pos next(pos start, pos direction);
 
 #endif // AOC_H_
 
 #ifdef AOC_UTILS_IMPLEMENTATION
+
+pos next(pos start, pos direction)
+{
+    return (pos){.x = start.x + direction.x, .y = start.y + direction.y};
+}
 
 int int_compare(const void *a, const void *b)
 {
@@ -191,7 +220,8 @@ Grid_t make_grid(const char *buffer, int lines)
             output.grid = NULL;
             goto end;
         }
-        memcpy(grid[i], &buffer[i * output.height + i], (output.width + 1) * sizeof(char));
+        memcpy(grid[i], &buffer[i * output.height + i],
+               (output.width + 1) * sizeof(char));
         grid[i][output.width] = '\0';
     }
 end:

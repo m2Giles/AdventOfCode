@@ -1,11 +1,6 @@
 #define AOC_UTILS_IMPLEMENTATION
 #include "../../../lib/aoc.h"
 
-typedef struct
-{
-  int x, y;
-} pos;
-
 bool bounds(int x, int y, Grid_t grid)
 {
   return 0 <= y && y < grid.height && 0 <= x && x < grid.width;

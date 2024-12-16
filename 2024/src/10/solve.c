@@ -8,33 +8,33 @@ typedef struct
     int x;
     int y;
     int trails;
-} pos;
+} pos_t;
 
 typedef struct
 {
-    pos *items;
+    pos_t *items;
     int count;
     int capacity;
 } da;
 
-void da_append(da *array, pos item)
+void da_append(da *array, pos_t item)
 {
     if (array->capacity == 0)
     {
         array->count = 0;
         array->capacity = 4;
-        array->items = malloc(sizeof(pos) * array->capacity);
+        array->items = malloc(sizeof(pos_t) * array->capacity);
     }
     if (array->count + 1 > array->capacity)
     {
         array->capacity <<= 1;
-        array->items = realloc(array->items, sizeof(pos) * array->capacity);
+        array->items = realloc(array->items, sizeof(pos_t) * array->capacity);
         assert(array->items != NULL && "Failed to realloc memory!");
     }
     array->items[array->count++] = item;
 }
 
-int find_trail(pos start, char elevation, da *trails, Grid_t grid, bool part)
+int find_trail(pos_t start, char elevation, da *trails, Grid_t grid, bool part)
 {
     if (elevation == '9')
     {
@@ -57,7 +57,7 @@ int find_trail(pos start, char elevation, da *trails, Grid_t grid, bool part)
             {
                 if (start.y + y > -1 && start.x + x > -1 && start.x + x < grid.width && start.y + y < grid.height && grid.grid[start.y + y][start.x + x] == elevation + 1)
                 {
-                    pos new = {.x = start.x + x, .y = start.y + y, .trails = 1};
+                    pos_t new = {.x = start.x + x, .y = start.y + y, .trails = 1};
                     output += find_trail(new, elevation + 1, trails, grid, part);
                 }
             }
@@ -106,7 +106,7 @@ int main(int argc, char **argv)
         for (int j = 0; j < grid.width; j++)
             if (grid.grid[i][j] == '0')
             {
-                pos temp = {.x = j, .y = i};
+                pos_t temp = {.x = j, .y = i};
                 da trails = {0};
                 da_append(&trailheads, temp);
                 trailheads.items[trailheads.count - 1].trails = find_trail(temp, '0', &trails, grid, 0);
@@ -136,7 +136,7 @@ int main(int argc, char **argv)
         for (int j = 0; j < grid.width; j++)
             if (grid.grid[i][j] == '0')
             {
-                pos temp = {.x = j, .y = i};
+                pos_t temp = {.x = j, .y = i};
                 da trails = {0};
                 da_append(&trailheads, temp);
                 trailheads.items[trailheads.count - 1].trails = find_trail(temp, '0', &trails, grid, 1);

@@ -8,11 +8,11 @@
 typedef struct
 {
     int x, y, dx, dy;
-} pos;
+} pos_t;
 
 typedef struct
 {
-    pos *items;
+    pos_t *items;
     int count;
     int capacity;
 } da;
@@ -52,7 +52,7 @@ int main(int argc, char **argv)
     clock_t tic = clock();
     char ptemp[100] = {0};
     da robots = {0};
-    pos robot = {0};
+    pos_t robot = {0};
     char **parse = &buffer;
 
     while (sgets(ptemp, 100, parse) != NULL)
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
     {
         int y = 0;
         int x = 0;
-        pos *r = &robots.items[i];
+        pos_t *r = &robots.items[i];
         {
             y = (r->y + (r->dy + HEIGHT) * 100) % HEIGHT;
             x = (r->x + (r->dx + WIDTH) * 100) % WIDTH;
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
         int grid[HEIGHT][WIDTH] = {0};
         for (int i = 0; i < robots.count; i++)
         {
-            pos *r = &robots.items[i];
+            pos_t *r = &robots.items[i];
             r->y = (r->y + r->dy + HEIGHT) % HEIGHT;
             r->x = (r->x + r->dx + WIDTH) % WIDTH;
             grid[r->y][r->x]++;
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
     bool grid[HEIGHT][WIDTH] = {0};
     for (int i = 0; i < robots.count; i++)
         {
-            pos *r = &robots.items[i];
+            pos_t *r = &robots.items[i];
             grid[r->y][r->x] = true;
         }
 
