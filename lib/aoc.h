@@ -67,6 +67,7 @@ typedef struct
 Buffer_t read_file_buffer(const char *filename);
 char *sgets(char *str, int n, char **input);
 int int_compare(const void *a, const void *b);
+int uint64_compare(const void *a, const void *b);
 char *read_file(const char *filename);
 int count_lines(const char *filename);
 Grid_t make_grid(const char *buffer, int lines);
