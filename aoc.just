@@ -1,3 +1,8 @@
+set allow-duplicate-variables := true
+set allow-duplicate-recipes := true
+
+default-day := file_name(invocation_dir())
+
 [private]
 default:
     @just --list
@@ -5,24 +10,24 @@ default:
 create_day day:
     #!/usr/bin/bash
     set -eou pipefail
-    year="$(basename {{ invocation_dir() }})"
-    if [[ ! "${year}" =~ [0-9]{4} ]]; then
-        echo "Not in a Year..."
-        exit 1
-    fi
-    if [[ ! "{{ day }}" =~ ^[0-2][0-9]$ ]]; then
+    if [[ "{{ day }}" -lt 1 || "{{ day }}" -gt 25 ]]; then
         echo "Improper Day..."
         exit 1
     fi
-    mkdir -p ${year}/src/{{ day }}
-    echo "" > ${year}/src/{{ day }}/test_file.txt
-    touch ${year}/src/{{ day }}/input_file.txt
-    if [[ -f src/{{ day }}/solve.c ]]; then
+    if [[ "{{ day }}" -lt 10 ]]; then
+        day="0$((10#{{ day }}))"
+    else
+        day={{ day }}
+    fi
+    mkdir -p ./src/${day}
+    touch ./src/${day}/test_file.txt
+    touch ./src/${day}/input_file.txt
+    if [[ -f ./src/${day}/solve.c ]]; then
         exit 0
     fi
-    cat > ${year}/src/{{ day }}/solve.c << 'EOF'
+    cat > ./src/${day}/solve.c << 'EOF'
     #define AOC_UTILS_IMPLEMENTATION
-    #include "../../../lib/aoc.h"
+    #include "aoc.h"
 
     int main(int argc, char **argv)
     {
@@ -60,7 +65,8 @@ create_day day:
 
         clock_t toc = clock();
         printf("Part1 Solution: %ld\n", solution);
-        printf("Part1 Time: %.03f ms\n", (double)(toc - tic) / CLOCKS_PER_SEC * 1000);
+        printf("Part1 Time: %.03f ms\n",
+            (double)(toc - tic) / CLOCKS_PER_SEC * 1000);
 
         // Part 2
         solution = 0;
@@ -68,7 +74,8 @@ create_day day:
 
         toc = clock();
         printf("Part2 Solution: %ld\n", solution);
-        printf("Part2 Time: %.03f ms\n", (double)(toc - tic) / CLOCKS_PER_SEC * 1000);
+        printf("Part2 Time: %.03f ms\n",
+            (double)(toc - tic) / CLOCKS_PER_SEC * 1000);
 
         free(buffer_t.buffer);
 
@@ -76,32 +83,35 @@ create_day day:
     }
     EOF
 
-build day:
+build day=default-day:
     #!/usr/bin/bash
     set -eou pipefail
-    year="$(basename {{ invocation_dir() }})"
-    if [[ ! "${year}" =~ [0-9]{4} ]]; then
-        echo "Not in a Year..."
+    if [[ "{{ day }}" -lt 1 || "{{ day }}" -gt 25 ]]; then
+        echo "Improper Day..."
         exit 1
     fi
-    if [[ ! "{{ day }}" =~ ^[0-2][0-9]$ ]]; then
-        echo "Improper Day?"
-        exit 1
+    if [[ "{{ day }}" -lt 10 ]]; then
+        day="0$((10#{{ day }}))"
+    else
+        day={{ day }}
     fi
     set -x
     mkdir -p build
-    gcc -o {{ invocation_dir() }}/build/{{ day }}.binary {{ invocation_dir() }}/src/{{ day }}/solve.c -Werror -Wall
+    gcc -o ./build/${day}.binary ./src/${day}/solve.c -Werror -Wall -I../lib
 
-run day: (build day)
+run day=default-day: (build day)
     #!/usr/bin/bash
     set -eou pipefail
-    year="$(basename {{ invocation_dir() }})"
-    if [[ ! "${year}" =~ [0-9]{4} ]]; then
-        echo "Not in a Year..."
+    if [[ "{{ day }}" -lt 1 || "{{ day }}" -gt 25 ]]; then
+        echo "Improper Day..."
         exit 1
     fi
+    if [[ "{{ day }}" -lt 10 ]]; then
+        day="0$((10#{{ day }}))"
+    else
+        day={{ day }}
+    fi
     echo -e "\033[1mTest File\033[0m"
-    "${year}"/build/{{ day }}.binary "${year}/src/{{ day }}/test_file.txt"
+    ./build/${day}.binary ./src/${day}/test_file.txt
     echo -e "\033[1mInput File\033[0m"
-    "${year}"/build/{{ day }}.binary "${year}/src/{{ day }}/input_file.txt"
-
+    ./build/${day}.binary ./src/${day}/input_file.txt

@@ -1,0 +1,3 @@
+import '../aoc.just'
+
+default: run

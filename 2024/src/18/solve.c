@@ -1,5 +1,5 @@
 #define AOC_UTILS_IMPLEMENTATION
-#include "../../../lib/aoc.h"
+#include "aoc.h"
 
 #define WIDTH 71
 #define HEIGHT 71
@@ -32,9 +32,9 @@ bool bounds(pos pos)
     return (pos.x >= 0 && pos.x < WIDTH && pos.y >= 0 && pos.y < HEIGHT);
 }
 
-ssize_t dijsktra(char grid[HEIGHT][WIDTH], pos start, pos end)
+size_t dijsktra(char grid[HEIGHT][WIDTH], pos start, pos end)
 {
-    ssize_t out = 0;
+    size_t out = 0;
     ssize_t Distance[HEIGHT][WIDTH] = {0};
     memset(Distance, -1, sizeof(Distance));
     step bestStep = {.pos = start, .dir = 2, .score = 0};
