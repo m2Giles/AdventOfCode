@@ -54,10 +54,10 @@ extern void *aoc_da_bsearch(void *items, size_t item_size, size_t count,
     {                                                                          \
         assert(index < (da_array_p)->capacity && "Index too Large!");          \
         assert(index > -1 && "Index too Small!");                              \
-        (da_array_p)->count--;                                                 \
         memmove(&(da_array_p)->items[index], &(da_array_p)->items[index + 1],  \
                 sizeof((da_array_p)->items[index]) *                           \
-                    ((da_array_p)->count - index));                            \
+                    ((da_array_p)->count - index - 1));                        \
+        (da_array_p)->count--;                                                 \
     } while (0)
 
 #define aoc_da_free(da_array)                                                  \
