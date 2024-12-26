@@ -261,7 +261,7 @@ Parts_t puzzle_split(const char *buffer)
     puzzle.part1 = malloc(sizeof(char) * (puzzle.part1_len));
     if (!puzzle.part1)
         return puzzle;
-    strncpy(puzzle.part1, buffer, split - buffer);
+    memcpy(puzzle.part1, buffer, split - buffer);
     puzzle.part1[puzzle.part1_len] = '\0';
     split++;
 
@@ -283,7 +283,7 @@ Parts_t puzzle_split(const char *buffer)
         puzzle.part1 = NULL;
         return puzzle;
     }
-    strncpy(puzzle.part2, &buffer[puzzle.part1_len + 1], puzzle.part2_len);
+    memcpy(puzzle.part2, &(buffer[puzzle.part1_len + 1]), puzzle.part2_len);
     puzzle.part2[puzzle.part2_len] = '\0';
 
     for (int i = 0; puzzle.part2[i] != '\0'; ++i)

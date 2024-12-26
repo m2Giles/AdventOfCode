@@ -1,8 +1,6 @@
 set allow-duplicate-variables := true
 set allow-duplicate-recipes := true
 
-default-day := file_name(invocation_dir())
-
 [private]
 default:
     @just --list
@@ -83,7 +81,7 @@ create_day day:
     }
     EOF
 
-build day=default-day:
+build day:
     #!/usr/bin/bash
     set -eou pipefail
     if [[ "{{ day }}" -lt 1 || "{{ day }}" -gt 25 ]]; then
@@ -99,7 +97,7 @@ build day=default-day:
     mkdir -p build
     gcc -o ./build/${day}.binary ./src/${day}/solve.c -Werror -Wall -I../lib
 
-run day=default-day: (build day)
+run day: (build day)
     #!/usr/bin/bash
     set -eou pipefail
     if [[ "{{ day }}" -lt 1 || "{{ day }}" -gt 25 ]]; then

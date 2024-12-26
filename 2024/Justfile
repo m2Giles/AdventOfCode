@@ -1,3 +1,5 @@
 import '../aoc.just'
 
-default: run
+defaultDay := file_name(invocation_dir())
+
+default: (run defaultDay)
